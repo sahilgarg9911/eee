@@ -91,3 +91,78 @@ const Header = () => {
   )
 }
 export default Header;
+
+
+
+-------------------------------------------------------------------------------------------------
+
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import {add, remove} from '../store/cartSlice';
+import './Productdetailpage.css';
+import { Link } from 'react-router-dom';
+// import ProductDetail from './ProductDetail';
+// import ActionItem from './ActionItem';
+
+function Productdetailpage() {
+    const dispatch = useDispatch();
+
+    let id = window.location.pathname.split("/");
+    id = id[2];
+    let [ itm, setitm] = useState({});
+
+    const param = useParams();
+
+    let data = async() => {
+        const datajson = await fetch('https://content.newtonschool.co/v1/pr/63b6c911af4f30335b4b3b89/products');
+        const data = await datajson.json();
+        console.log(data[id-1]);
+        console.log(data[id-1].title);
+        setitm(data[id-1]);
+    }
+
+    useEffect(() => {
+        if(param?.id) {
+            data();
+        }
+        console.log(param?.id);
+        console.log(itm);
+    }, [param?.id])
+    // return (<div>{itm.title}</div>)   
+    
+    function handleAdd(product){
+        dispatch(add(product))
+        //  dispatch({type:'cart/add', payload: product})
+        //  console.log(add(product))
+     }
+
+
+    return (
+        <>
+         {/* <Link to='/Checkout'> */}
+        <div className='productdetailpage'>
+        <section className='imagesandbutton'>
+        <div className='imagediv'>
+        <img className='productimage' src={itm.image} alt="" />        
+        </div>
+        <button className='twobutton addtocart' onClick={()=>handleAdd(itm)}>Add to cart</button>
+        <button className='twobutton buynow'>Buy now</button>
+        </section>
+        <div className='detaildiv'>
+            <h3 className='titledetail common'>{itm.title}</h3>
+            <div className='ratingandcount common'>
+                <div className='rating'>4.6 ★</div>
+                <div className='count'>(150)</div>
+                {/* <div className='count'>{itm..rating}</div> */}
+            </div>
+            <div className='pricedetail common'>₹{itm.price}</div>
+            <p className='descriptiondetail common'>{itm.description}</p>
+        </div>
+        </div>
+        {/* </Link> */}
+        </>
+
+        ) 
+}
+export default Productdetailpage 
